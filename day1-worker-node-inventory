@@ -15,3 +15,27 @@ sudo -i
   ssh root@privateip
   ###say yes and you will be login to the particular machine 
   exit
+#################################
+  42  cd /root/project/
+   43  ls
+   44  rm ansible.cfg
+   45  vi ansible.cfg
+#inside ansible.cfg add this values
+[defaults]
+inventory =  host.ini
+host_key_checking=false
+remote_user=root
+log_path = ./log/ansible.log
+forks = 5
+
+   46  mkdir log
+##inside that add the worker node details
+   49  vi host.ini (do not forget to change web1 ip to your worker node ip address
+[ansible]
+ansible-master ansible_host=127.0.0.1
+[web]
+web1 ansible_host=172.31.82.114
+
+   50  ansible all -m ping
+   51  ansible web1 -m ping
+
