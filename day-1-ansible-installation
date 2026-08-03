@@ -24,3 +24,12 @@
    38  ansible-galaxy collection list
 #how to check where the collection are stored
 ansible-config dump | grep COLLECTIONS_PATHS
+#lets generate the ansible cfg file and check the content
+41  cd /root
+   42  mkdir project
+   43  cd project/
+   44  ansible-config init --disabled 
+   45  ansible-config init --disabled > ansible.cfg
+   46  ls
+   47  cat ansible.cfg 
+   48  head -20 ansible.cfg
