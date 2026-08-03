@@ -34,3 +34,9 @@ ansible config init --format ini > ansible.cfg
    46  ls
    47  cat ansible.cfg 
    48  head -20 ansible.cfg
+  27  ansible-config list
+   28  ansible-config dump --only-changed
+   29  ansible-config list
+   30  ansible-config dump --only-changed
+   31  ansible-config view
+   32  ansible-config dump view | grep inventory
