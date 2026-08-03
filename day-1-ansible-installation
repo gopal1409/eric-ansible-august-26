@@ -30,6 +30,7 @@ ansible-config dump | grep COLLECTIONS_PATHS
    43  cd project/
    44  ansible-config init --disabled 
    45  ansible-config init --disabled > ansible.cfg
+ansible config init --format ini > ansible.cfg
    46  ls
    47  cat ansible.cfg 
    48  head -20 ansible.cfg
