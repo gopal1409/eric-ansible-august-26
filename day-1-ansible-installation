@@ -34,6 +34,8 @@ ansible-config init --format ini > ansible.cfg
    46  ls
    47  cat ansible.cfg 
    48  head -20 ansible.cfg
+##if you generate the configuration using ini file it will not work
+   45  ansible-config init --disabled > ansible.cfg
   27  ansible-config list
    28  ansible-config dump --only-changed
    29  ansible-config list
