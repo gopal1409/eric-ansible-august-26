@@ -22,3 +22,5 @@
    37  ansible-galaxy collection install /tmp/community-docker-5.2.1.tar.gz
 #verify the same using collection list
    38  ansible-galaxy collection list
+#how to check where the collection are stored
+ansible-config dump | grep COLLECTIONS_PATHS
