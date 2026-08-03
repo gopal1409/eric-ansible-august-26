@@ -1,0 +1,17 @@
+##inside the ansible master node we will genrate teh ssh key 
+sudo -i
+  ssh-keygen -t rsa -b 4096
+  #####just press enter enter this will generate the public private key you can get the pub key 
+  36  cat /root/.ssh/id_rsa.pub
+  #####you need to login inside your worker node once you login inside your worker node we need to paste the public key in authorized_key
+  sudo -i
+  ##open the file using nano editor go to the end of the line press enter and paste the public key at the end
+  15  nano /root/.ssh/authorized_keys
+  ##save the file using ctrl x press y and enter
+
+  ##finally once you saved the file 
+  #####copy the private ip address of the instance
+  ##go to the master machine terminal 
+  ssh root@privateip
+  ###say yes and you will be login to the particular machine 
+  exit
