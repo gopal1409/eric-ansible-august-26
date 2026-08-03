@@ -3,6 +3,6 @@
   sudo -i
   ###then add the public key 
   ###go back to your master machine eastibilish the ssh connection ssh root@private ip
-  ##inside the project folder in dev.ini file in web block add the inventory 
+  ##inside the project folder in host.ini file in web block add the inventory 
   ansible all -m ping
   ##3 it should ping your amazon node also
