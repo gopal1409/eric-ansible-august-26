@@ -9,3 +9,16 @@
   ls /usr/lib/python3/dist-packages/ansible/modules
   #suppose i want to download modules which can interact with my docker container
   ansible-galaxy collection install community.docker
+#in prod we need a machine which has internet
+ 30  mkdir collections
+   31  cd collections/
+   32  ansible-galaxy collection download community.docker
+   33  ls
+   34  cd collections/
+   35  ls -la
+#using scp or ftp transfer the file to that vm in tmp directory
+   36  scp community-docker-5.2.1.tar.gz user@192.168.12.13:/tmp/
+#install the same
+   37  ansible-galaxy collection install /tmp/community-docker-5.2.1.tar.gz
+#verify the same using collection list
+   38  ansible-galaxy collection list
