@@ -1,0 +1,11 @@
+#by default ansible avaialbe as an binary package in your popular linux ubuntu redhat amazon linux
+  #before we install ansible you need to verify python is there or not 
+  apt-get update
+  apt-get upgrade
+  python3 --version
+  apt install ansible 
+  ansible --version
+  ###if you want to see what are the modules avaialbe by default
+  ls /usr/lib/python3/dist-packages/ansible/modules
+  #suppose i want to download modules which can interact with my docker container
+  ansible-galaxy collection install community.docker
