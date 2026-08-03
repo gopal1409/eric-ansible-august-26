@@ -38,4 +38,19 @@ web1 ansible_host=172.31.82.114
 
    50  ansible all -m ping
    51  ansible web1 -m ping
+#in master node ansible try to do ssh in 127.0.0.1
+ansible-master | UNREACHABLE! => {
+    "changed": false,
+    "msg": "Failed to connect to the host via ssh: root@127.0.0.1: Permission denied (publickey,password).",
+    "unreachable": true
+}
+##to resolve the error we can do inside the inventory file change the master node inventory to this 
+vi host.ini
+[ansible]
+ansible-master ansible_connection=local
+[web]
+web1 ansible_host=172.31.82.114
+##then run the command 
+ansible all -m ping 
+
 
