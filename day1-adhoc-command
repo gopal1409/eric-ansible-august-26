@@ -1,0 +1,130 @@
+1. Test Connectivity
+ansible all -m ping
+2. Check Hostname
+ansible all -a "hostname"
+3. Check Uptime
+ansible all -a "uptime"
+4. Check Logged-in Users
+ansible all -a "who"
+5. Check Current User
+ansible all -a "whoami"
+6. Check Disk Space
+ansible all -a "df -h"
+7. Check Memory Usage
+ansible all -a "free -m"
+8. Check CPU Information
+ansible all -a "lscpu"
+9. Check OS Version
+ansible all -a "cat /etc/os-release"
+10. Check Kernel Version
+ansible all -a "uname -r"
+11. Check IP Address
+ansible all -a "ip addr"
+12. Gather System Facts
+ansible all -m setup
+
+Only network facts:
+
+ansible all -m setup -a "filter=ansible_default_ipv4"
+13. Install Git
+
+Ubuntu:
+
+ansible all -b -m apt -a "name=git state=present update_cache=yes"
+
+RHEL:
+
+ansible all -b -m dnf -a "name=git state=present"
+14. Update All Packages (Ubuntu)
+ansible all -b -m apt -a "upgrade=dist update_cache=yes"
+15. Create a User
+ansible all -b -m user -a "name=devops state=present"
+16. Delete a User
+ansible all -b -m user -a "name=devops state=absent remove=yes"
+17. Create a Directory
+ansible all -m file -a "path=/opt/demo state=directory mode=0755"
+18. Delete a Directory
+ansible all -m file -a "path=/opt/demo state=absent"
+19. Copy a File
+ansible all -m copy -a "src=index.html dest=/tmp/index.html"
+20. Download a File
+ansible all -m get_url -a "url=https://example.com/file.txt dest=/tmp/file.txt"
+21. Install Nginx
+ansible web -b -m apt -a "name=nginx state=present"
+22. Start Nginx
+ansible web -b -m service -a "name=nginx state=started enabled=yes"
+23. Restart Nginx
+ansible web -b -m service -a "name=nginx state=restarted"
+24. Stop Nginx
+ansible web -b -m service -a "name=nginx state=stopped"
+25. Reboot Servers
+ansible all -b -m reboot
+26. Shut Down Servers
+ansible all -b -m shell -a "shutdown -h now"
+27. Check Running Processes
+ansible all -a "ps -ef"
+28. Kill a Process
+ansible all -b -m shell -a "pkill nginx"
+29. Check Open Ports
+ansible all -a "ss -tulnp"
+30. Check Systemd Services
+ansible all -a "systemctl list-units --type=service"
+31. Check Docker Containers
+ansible docker -a "docker ps"
+32. Check Kubernetes Nodes
+ansible k8s-master -a "kubectl get nodes"
+33. Find Large Files
+ansible all -a "find /var -type f -size +100M"
+34. Check Failed Services
+ansible all -a "systemctl --failed"
+35. View Recent Logs
+ansible all -a "journalctl -n 50"
+36. Check SSH Service
+ansible all -b -m service -a "name=ssh state=started"
+37. Add an SSH Public Key
+ansible all -b -m authorized_key \
+-a "user=ubuntu key='ssh-ed25519 AAAAC3Nza... user@example'"
+38. Check Time Synchronization
+ansible all -a "timedatectl"
+39. Run Different Commands Only on the Web Group
+ansible web -a "hostname"
+40. Limit Execution to One Host
+ansible all -l web1 -a "uptime"
+41. Execute Commands in Parallel
+ansible all -f 20 -a "hostname"
+
+-f 20 tells Ansible to manage up to 20 hosts concurrently.
+
+42. Dry Run (Supported Modules)
+ansible all -m copy -a "src=test.txt dest=/tmp/test.txt" --check
+43. Use Verbose Output
+ansible all -m ping -vvv
+Commonly Used Modules
+Module	Purpose
+ping	Test connectivity
+setup	Gather system facts
+command	Run a command (default if -m is omitted)
+shell	Run shell commands with pipes, redirects, etc.
+copy	Copy files to remote hosts
+fetch	Copy files from remote hosts
+file	Create/remove files and directories
+user	Manage users
+group	Manage groups
+service	Start, stop, restart, and enable services
+apt	Manage packages on Ubuntu/Debian
+dnf	Manage packages on RHEL 8+/Fedora
+yum	Manage packages on older RHEL/CentOS
+reboot	Reboot remote systems
+authorized_key	Manage SSH public keys
+Example: Daily Health Check
+
+This sequence gives a quick overview of server health:
+
+ansible all -a "hostname"
+ansible all -a "uptime"
+ansible all -a "df -h"
+ansible all -a "free -m"
+ansible all -a "systemctl --failed"
+ansible all -a "journalctl -p err -n 20"
+
+These are the types of ad hoc commands commonly used for day-to-day Linux administration and operational checks before moving to reusable playbooks for larger automation tasks.
