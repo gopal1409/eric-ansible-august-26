@@ -52,5 +52,11 @@ ansible-master ansible_connection=local
 web1 ansible_host=172.31.82.114
 ##then run the command 
 ansible all -m ping 
+#####################################
+#this is for refrence purpose like a common patch is deployed for dev and test environment this way i can apply the same
+ 69  ansible -i inventory/dev.ini -i inventory/prod.ini -m ping
+#inside the inventory folder if we have test.ini dev.ini prod.ini and i want to execute all the inventory 
+   70  ansible -i inventory all -m ping
+
 
 
