@@ -1,0 +1,41 @@
+##inside the project folder create an yaml file 
+  175  vi nginx.yml
+  #every ansible playbook start with ---
+---
+- name: install and configure nginx 
+  hosts: web 
+  become: yes #this will run this playbook with root privileges
+  #we can define some varaibles also for your playbook
+  vars:
+    ubuntu_packages:
+      - nginx
+      - ufw
+    amazon_packages:
+      - nginx
+      - firewalld
+#where is the diction and where the list of items
+  tasks: #all the task need to be define as list of items
+    - name: gather fact about the system
+      ansible.builtin.setup:
+    - name: display the os
+      ansible.builtin.debug: #this debug module is like an echo command in linux
+        msg: "The OS is {{ ansible_os_family }} and the version is {{ ansible_distribution_version }}"
+      
+    ##save this file and run the playbook
+  176  ansible-playbook nginx.yml
+        #this will do syntax check on yaml
+  177  ansible-playbook nginx.yml --syntax-check
+        #this will do only dry run
+  178  ansible-playbook nginx.yml --check
+
+  180  ansible-playbook nginx.yml -C
+#different check with dry run
+  182  ansible-playbook nginx.yml --check --diff
+        #this will give the graph about your inventroy
+  183  ansible-inventory -i host.ini --graph
+  #list all your task
+  185  ansible-playbook nginx.yml --list-task
+        #list the hosts where your play apply
+  186  ansible-playbook nginx.yml --list-hosts
+        #verbose give you downthe the line ansible is doing what
+  187  ansible-playbook nginx.yml -vvv
