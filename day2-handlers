@@ -1,0 +1,123 @@
+#inside your project directory create a folder called template and store the configuration file
+  mkdir templates
+  vi templates/nginx.conf.j2
+  ###add this content inside it 
+  
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ website_title }}</title>
+
+    <style>
+        body{
+            font-family: Arial;
+            background:#f4f4f4;
+            text-align:center;
+            padding-top:80px;
+        }
+
+        .box{
+            width:700px;
+            margin:auto;
+            background:white;
+            padding:40px;
+            border-radius:10px;
+            box-shadow:0 0 15px gray;
+        }
+
+        h1{
+            color:#0d6efd;
+        }
+
+        h2{
+            color:#198754;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h1>{{ website_title }}</h1>
+
+<h2>{{ company }}</h2>
+
+<p>This website was deployed using <b>Ansible</b>.</p>
+
+<p>Hostname:
+<b>{{ ansible_hostname }}</b></p>
+
+<p>Operating System:
+<b>{{ ansible_distribution }}
+{{ ansible_distribution_version }}</b></p>
+
+<p>IP Address:
+<b>{{ ansible_default_ipv4.address }}</b></p>
+
+<p>CPU:
+<b>{{ ansible_processor_vcpus }}</b></p>
+
+<p>Memory:
+<b>{{ ansible_memtotal_mb }} MB</b></p>
+
+<p>Deployment Time:
+<b>{{ ansible_date_time.date }}
+{{ ansible_date_time.time }}</b></p>
+
+</div>
+
+</body>
+</html>
+
+  ###after saving the file open nginx.yml
+  #every ansible playbook start with ---
+---
+- name: install and configure nginx 
+  hosts: web 
+  become: yes #this will run this playbook with root privileges
+  #we can define some varaibles also for your playbook
+  vars:
+    ubuntu_packages:
+      - nginx
+      - ufw
+    amazon_packages:
+      - nginx
+      - firewalld
+    website_title: "welcome to Devops"
+    company: "acme technology"
+#where is the diction and where the list of items
+  tasks: #all the task need to be define as list of items
+    - name: gather fact about the system
+      ansible.builtin.setup:
+    - name: display the os
+      ansible.builtin.debug: #this debug module is like an echo command in linux
+        msg: "The OS is {{ ansible_os_family }} and the version is {{ ansible_distribution_version }}"
+    - name: Install nginx on ubuntu
+      ansible.builtin.apt:
+        name: "{{ ubuntu_packages }}"
+        state: present #absent, present, latest
+      when: ansible_os_family == "Debian"    
+    - name: Install nginx on amazon linux
+      ansible.builtin.yum:
+        name: "{{ amazon_packages }}"
+        state: present
+      when: ansible_os_family == "RedHat"
+    - name: copy configuration file to nginx
+      ansible.builtin.copy:
+        src: templates/nginx.conf.j2
+        dest: /usr/share/nginx/html/index.html
+      notify: restart_nginx
+  handlers:
+    - name: restart_nginx
+      ansible.builtin.service:
+        name: nginx
+        state: restarted      
+    ####to test the same 
+          ansible-playbook nginx.yml
+          ####check at the end of the result handler is executing
+          #rerun
+                    ansible-playbook nginx.yml
+###second time the handler will not execute
+          
