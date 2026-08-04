@@ -54,14 +54,13 @@
         status_code: 200
       #if we want to store the output of this task we can use register keyword
       register: website_result
-      change_when: false
     - name: Display Website Result
       ansible.builtin.debug:
 
         msg:
           - "HTTP_Status: {{ website_result.status }}"
           - "HTTP_Status: {{ website_result.status_code }}"
-          - "Content: {{ website_result.content | length }} bytes"
+          - "Response Length: {{ website_result.content | length }} bytes"
   ###execute the same if you do not find any changes or handler do not execute
             ##go to the template folder modify nginx.conf.j2
             ##then re run see the handler execute or not
