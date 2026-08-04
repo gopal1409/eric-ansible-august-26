@@ -44,7 +44,7 @@
         enabled: yes 
       notify: 
         - skyforce   
-        - name: Display Website Result
+        - Display Website Result
           
     - name: skyforce
       ansible.builtin.uri:
