@@ -71,3 +71,7 @@
 systemctl status nginx
 curl localhost
 ########################finally you need to make the line 66 as absent and run the playbook verify the package is remove or not
+#exercise ubuntu machine we have nginx install lets install it in amazon linux machine using a package manager called as dnf
+https://docs.ansible.com/projects/ansible/latest/collections/ansible/builtin/dnf_module.html
+1. you need to create a task for amazon linux
+2. when statement to check for the os
