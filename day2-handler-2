@@ -1,5 +1,6 @@
 #modify the nginx.yml file delete everything and add it 
 #every ansible playbook start with ---
+#every ansible playbook start with ---
 ---
 - name: install and configure nginx 
   hosts: web 
@@ -59,7 +60,7 @@
 
         msg:
           - "HTTP_Status: {{ website_result.status }}"
-          - "HTTP_Status: {{ website_result.status_code }}"
+          - "Server: {{ website_result.Server | default('N/A') }}"
           - "Response Length: {{ website_result.content | length }} bytes"
   ###execute the same if you do not find any changes or handler do not execute
             ##go to the template folder modify nginx.conf.j2
