@@ -39,3 +39,35 @@
   186  ansible-playbook nginx.yml --list-hosts
         #verbose give you downthe the line ansible is doing what
   187  ansible-playbook nginx.yml -vvv
+##lets modify the nginx.yml file delete everything and add this
+#every ansible playbook start with ---
+---
+- name: install and configure nginx 
+  hosts: web 
+  become: yes #this will run this playbook with root privileges
+  #we can define some varaibles also for your playbook
+  vars:
+    ubuntu_packages:
+      - nginx
+      - ufw
+    amazon_packages:
+      - nginx
+      - firewalld
+#where is the diction and where the list of items
+  tasks: #all the task need to be define as list of items
+    - name: gather fact about the system
+      ansible.builtin.setup:
+    - name: display the os
+      ansible.builtin.debug: #this debug module is like an echo command in linux
+        msg: "The OS is {{ ansible_os_family }} and the version is {{ ansible_distribution_version }}"
+    - name: Install nginx on ubuntu
+      ansible.builtin.apt:
+        name: "{{ ubuntu_packages }}"
+        state: present #absent, present, latest
+      when: ansible_os_family == "Debian"    
+      
+    ###after that ansible-playbook nginx.yml
+###you can login to the ubuntu machine using ssh root@privateip
+systemctl status nginx
+curl localhost
+########################finally you need to make the line 66 as absent and run the playbook verify the package is remove or not
