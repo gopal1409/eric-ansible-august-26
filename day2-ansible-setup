@@ -1,1 +1,141 @@
  ansible web1 -m "setup"
+Basic Syntax
+ansible-doc [options] <plugin_name>
+1. View documentation for a module
+ansible-doc ping
+
+Example:
+
+ansible-doc copy
+ansible-doc file
+ansible-doc service
+ansible-doc apt
+ansible-doc yum
+2. List all available modules
+ansible-doc -l
+
+To search for a specific module:
+
+ansible-doc -l | grep user
+
+Output example:
+
+ansible.builtin.user
+community.general.htpasswd
+3. Show examples only
+ansible-doc -s copy
+
+This displays a shortened version containing parameters and examples.
+
+4. Show detailed documentation
+ansible-doc file
+
+This includes:
+
+Description
+Parameters
+Examples
+Return values
+Notes
+5. View documentation for collections
+ansible-doc ansible.builtin.copy
+
+or
+
+ansible-doc community.general.htpasswd
+6. List plugins by type
+Connection plugins
+ansible-doc -t connection -l
+Inventory plugins
+ansible-doc -t inventory -l
+Callback plugins
+ansible-doc -t callback -l
+Lookup plugins
+ansible-doc -t lookup -l
+Become plugins
+ansible-doc -t become -l
+Cache plugins
+ansible-doc -t cache -l
+Filter plugins
+ansible-doc -t filter -l
+7. View documentation for a plugin
+
+Example:
+
+ansible-doc -t lookup file
+ansible-doc -t connection ssh
+8. Show all available plugin types
+ansible-doc --help
+
+Plugin types include:
+
+module
+inventory
+lookup
+connection
+callback
+strategy
+shell
+become
+cache
+filter
+vars
+test
+9. Find a module
+
+Suppose you want to find modules related to packages:
+
+ansible-doc -l | grep package
+
+or
+
+ansible-doc -l | grep apt
+10. Find modules for users
+ansible-doc -l | grep user
+
+Then inspect one:
+
+ansible-doc user
+Common Commands
+Task	Command
+List all modules	ansible-doc -l
+View module documentation	ansible-doc copy
+Short documentation	ansible-doc -s copy
+List inventory plugins	ansible-doc -t inventory -l
+List lookup plugins	ansible-doc -t lookup -l
+List connection plugins	ansible-doc -t connection -l
+View SSH connection plugin	ansible-doc -t connection ssh
+Search for modules	ansible-doc -l | grep copy
+View user module	ansible-doc user
+Show help	ansible-doc --help
+Practical Examples
+
+Check the copy module:
+
+ansible-doc copy
+
+Check the service module:
+
+ansible-doc service
+
+Check the systemd module:
+
+ansible-doc systemd
+
+Check the template module:
+
+ansible-doc template
+
+Check the lineinfile module:
+
+ansible-doc lineinfile
+
+Check the apt module:
+
+ansible-doc apt
+
+Check the yum module:
+
+ansible-doc yum
+
+These commands are among the most useful during playbook development because they let you quickly verify a module's parameters, examples, and return values without leaving the terminal.
