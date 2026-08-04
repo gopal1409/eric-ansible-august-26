@@ -75,3 +75,4 @@ curl localhost
 https://docs.ansible.com/projects/ansible/latest/collections/ansible/builtin/dnf_module.html
 1. you need to create a task for amazon linux
 2. when statement to check for the os
+ansible all -m setup | ansible_os_family
