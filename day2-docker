@@ -1,0 +1,48 @@
+#create a new file docker.yml
+  #the last block checking docker deamon is working or not it will not show any result. 
+  1. register the output in a varaible 
+  3. debug module of ansible display the output
+  #every ansible playbook start with ---
+---
+- name: install and configure nginx 
+  hosts: web 
+  become: yes #this will run this playbook with root privileges
+  #we can define some varaibles also for your playbook
+  vars:
+    docker_packages:
+      Debian:
+        - docker.io
+        - docker-compose
+      RedHat:
+        - docker
+       
+  tasks: #all the task need to be define as list of items
+    - name: gather fact about the system
+      ansible.builtin.setup:
+    - name: display the os
+      ansible.builtin.debug: #this debug module is like an echo command in linux
+        msg: "The OS is {{ ansible_os_family }} and the version is {{ ansible_distribution_version }}"
+    - name: Install docker on ubuntu
+      ansible.builtin.apt:
+        name: "{{ docker_packages.Debian }}"
+        state: present #absent, present, latest
+      when: ansible_os_family == "Debian"    
+    - name: Install docker on amazon linux
+      ansible.builtin.yum:
+        name: "{{ docker_packages.RedHat }}"
+        state: present
+      when: ansible_os_family == "RedHat"
+    - name: Enable and start docker service
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: yes
+    - name: check docker service running
+      ansible.builtin.service_facts:
+    - name: Display docker service status
+      ansible.builtin.debug:
+        msg: "Docker service is {{ ansible_facts.services['docker.service'].state }}"
+    - name: verify docker daemon is running
+      ansible.builtin.command: docker info
+      register: docker_info
+      ignore_errors: yes
