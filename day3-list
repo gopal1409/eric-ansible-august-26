@@ -1,0 +1,20 @@
+#a list will stores multiple values in order
+---
+- name: list example for installing multiple packages
+  hosts: web1
+  vars:
+    packages:
+      - wget
+      - git
+      - curl
+  tasks:
+    - name: display all the packages
+      ansible.builtin.debug:
+        msg: "The packages to be installed are {{ packages }}" #jinja2
+    - name: Display the first package
+      ansible.builtin.debug:
+        msg: "The first package is {{ packages[0] }}"
+    - name: install the packages
+      ansible.builtin.package:
+        name: "{{ packages }}"
+        state: present
