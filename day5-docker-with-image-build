@@ -119,6 +119,29 @@
         restart_policy: always
         ports:
           - "8082:80"
+#####################################################
+#####gather container information
+#####################################################
+
+    - name: gather container information web1
+      community.docker.docker_container_info:
+        name: web1
+      register: web1 
+    - name: gather container information web2
+      community.docker.docker_container_info:
+        name: web2
+      register: web2
+    - name: Display container information
+      ansible.builtin.debug:
+        msg: 
+          - "Container Info: {{ item.container.Name }}"
+          - "Container Status: {{ item.container.State.Status }}"
+          - "Container IP Address: {{ item.container.IPAddress }}"
+          - "Container Ports: {{ item.container.NetworkSettings.Networks.bridge.Ports }}"
+          - "Container Image: {{ item.container.Image }}"
+      loop:
+        - "{{ web1 }}"
+        - "{{ web2 }}"
 ###once you modify the docker file and apply using ansible playbook
 ##how to verify the contianer is running or not 
 ##ssh to any of the instance run a command docker ps will show both the container
