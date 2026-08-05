@@ -1,0 +1,62 @@
+##lets create some password 
+  openssl passwd -6
+  #####copy the output and store it in a notepad
+  ##then we will create a vault file
+  ansible-vault create vault.yml
+  ##it will ask for the password give a password but dont forget it
+  ##inside the file add the user password
+  user_password:
+  gopal: $6$gllMz20Smfl6FRTA$lGUWYlZw.a8ZThHh6XdievM/22uxftWsU8iSqWN9Y/5iQVKspAaWzJFyOa/Des2Q2ccKiohM6DJeFeCvQ2Wfm1
+  bob: $6$gllMz20Smfl6FRTA$lGUWYlZw.a8ZThHh6XdievM/22uxftWsU8iSqWN9Y/5iQVKspAaWzJFyOa/Des2Q2ccKiohM6DJeFeCvQ2Wfm1
+  charlie: $6$gllMz20Smfl6FRTA$lGUWYlZw.a8ZThHh6XdievM/22uxftWsU8iSqWN9Y/5iQVKspAaWzJFyOa/Des2Q2ccKiohM6DJeFeCvQ2Wfm1
+    #if you want to view the content 
+    cat vault.yml
+    ###the above command will show that all the content in the file is aes256 bit encvrypted
+    ansible-vault view vault.yml
+#####next we will create the dist-user.yml
+     407  vi dict-user.yml
+#every ansible playbook start with ---
+---
+- name: install and configure user
+  hosts: web 
+  become: yes #this will run this playbook with root privileges
+  #we can define some varaibles also for your playbook
+  ##to call a varaible from another file we can use vars_files keyword
+  vars_files:
+    - vault.yml
+  vars:
+    users:
+      - username: gopal
+        uid: 2001
+        group: devops
+        shell: /bin/bash  
+      - username: bob
+        uid: 2002
+        group: devops
+        shell: /bin/bash
+      - username: charlie
+        uid: 2003
+        group: devops
+        shell: /bin/bash
+  tasks:
+    - name: first we need to create a group
+      ansible.builtin.group:
+        name: "{{ item.group }}"
+        state: present
+      loop: "{{ users }}"
+    - name: create the users
+      ansible.builtin.user:
+        name: "{{ item.username }}"
+        uid: "{{ item.uid }}"
+        group: "{{ item.group }}"
+        shell: "{{ item.shell }}"
+        create_home: yes
+        state: present
+      loop: "{{ users }}"
+        #this will not execute 
+  408  ansible-playbook dict-user.yml
+        ##check the vault.yml file it is encrypted 
+  409  cat vault.yml
+        ##to run it you need to provide the vault pass
+  410  ansible-playbook dict-user.yml --ask-vault-pass
+    
