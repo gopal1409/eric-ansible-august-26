@@ -1,0 +1,84 @@
+#a list will stores multiple values in order
+---
+- name: list example for installing multiple packages
+  hosts: web1
+  vars:
+    packages:
+      - wget
+      - git
+      - curl
+  tasks:
+    - name: display all the packages
+      ansible.builtin.debug:
+        msg: "The packages to be installed are {{ packages }}" #jinja2
+    - name: Display the first package
+      ansible.builtin.debug:
+        msg: "The first package is {{ packages[0] }}"
+    - name: install the packages
+      ansible.builtin.package:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ packages }}"
+
+- name: list create multiple users
+  hosts: web1
+  vars:
+    users:
+      - alice
+      - bob
+      - charlie
+  tasks:
+    - name: display all the users
+      ansible.builtin.debug:
+        msg: "The users to be created are {{ users }}" 
+    - name: Display the first user
+      ansible.builtin.debug:
+        msg: "The first user is {{ users[0] }}"
+    - name: create the users
+      ansible.builtin.user:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ users }}"
+
+- name: list create multiple groups
+  hosts: web1
+  vars:
+    groups:
+      - admin
+      - dev
+      - ops
+  tasks:
+    - name: display all the groups
+      ansible.builtin.debug:
+        msg: "The groups to be created are {{ groups }}" 
+      ignore_errors: yes
+    - name: create the groups
+      ansible.builtin.group:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ groups }}"
+      ignore_errors: yes
+
+
+- name: list create multiple files
+  hosts: web1
+  vars:
+    files:
+      - /tmp/file1.txt
+      - /tmp/file2.txt  
+  tasks:
+    - name: display all the files
+      ansible.builtin.debug:
+        msg: "The files to be created are {{ files }}" 
+    - name: Display the first file
+      ansible.builtin.debug:
+        msg: "The first file is {{ files[0] }}"
+    - name: create the files
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: touch
+      loop: "{{ files }}"
+      register: created_files
+    - name: display the created files
+      ansible.builtin.debug:
+        msg: "The created files are {{ created_files.results | map(attribute='item') | list }}"
