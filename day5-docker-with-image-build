@@ -1,7 +1,3 @@
-##login to ubuntu system #install the buildx plugin
-  sudo apt-get install -y docker-buildx
-
-##delete everything from docker.yml file
 #every ansible playbook start with ---
 ---
 - name: install and configure nginx 
@@ -97,9 +93,33 @@
         tag: v1
         path: "{{build_path}}"
       register: image
+##########################################
+##show images
+##########################################
+    - name: Display docker images
+      ansible.builtin.debug:
+        msg: "Image Name:{{ image }}"
+########################################
+######using the image we are going to run the container
+########################################
 
-  ###apply it 
-        ##then login to the systm 
-        docker images
-        
-  
+    - name: run the docker container 1
+      community.docker.docker_container:
+        name: web1
+        image: my-nginx:v1
+        state: started
+        restart_policy: always
+        ports:
+          - "8081:80"
+    - name: run the docker container 2
+      community.docker.docker_container:
+        name: web2
+        image: my-nginx:v1
+        state: started
+        restart_policy: always
+        ports:
+          - "8082:80"
+###once you modify the docker file and apply using ansible playbook
+##how to verify the contianer is running or not 
+##ssh to any of the instance run a command docker ps will show both the container
+###copy the ubuntu machine or amazon linux machine ip in the browser:8081
