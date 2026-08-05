@@ -1,0 +1,193 @@
+#every ansible playbook start with ---
+---
+- name: install and configure nginx 
+  hosts: web 
+  become: yes #this will run this playbook with root privileges
+  #we can define some varaibles also for your playbook
+  vars_files:
+    - vault.yml
+  vars:
+    dockerhub_username: "gopal1409"
+    docker_hub_password: "{{vault_docker_hub_password}}" #this is a variable from vault.yml file
+    docker_hub_repository: "gopal1409"
+    image_name: my-nginx
+    image_tag: "v1"
+    docker_packages:
+      Debian:
+        - docker.io
+        - docker-compose
+  
+      RedHat:
+        - docker
+    docker_user:
+      Debian: ubuntu
+      RedHat: ec2-user
+    github: "https://github.com/gopal1409/eric-ansible-docker-file-august26.git"
+    build_path: "/opt/docker-app"
+       
+  tasks: #all the task need to be define as list of items
+    - name: install git package
+      ansible.builtin.package:
+        name: git
+        state: present
+    - name: gather fact about the system
+      ansible.builtin.setup:
+    - name: display the os
+      ansible.builtin.debug: #this debug module is like an echo command in linux
+        msg: "The OS is {{ ansible_os_family }} and the version is {{ ansible_distribution_version }}"
+    - name: Install docker on ubuntu
+      ansible.builtin.apt:
+        name: "{{ docker_packages.Debian }}"
+        state: present #absent, present, latest
+      when: ansible_os_family == "Debian"    
+    - name: Install docker on amazon linux
+      ansible.builtin.yum:
+        name: "{{ docker_packages.RedHat }}"
+        state: present
+      when: ansible_os_family == "RedHat"
+    - name: Enable and start docker service
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: yes
+    - name: check docker service running
+      ansible.builtin.service_facts:
+    - name: Display docker service status
+      ansible.builtin.debug:
+        msg: "Docker service is {{ ansible_facts.services['docker.service'].state }}"
+    - name: verify docker daemon is running
+      ansible.builtin.command: docker info
+      register: docker_info
+      ignore_errors: yes
+    - name: Display docker info
+      ansible.builtin.debug:
+        msg: "{{ docker_info.stdout }}"
+    ############################################
+    #start docker
+    ########################################### 
+    - name: start docker service 
+      ansible.builtin.service:
+        name: docker
+        state: started 
+        enabled: yes
+    ###########################################
+    #add user to docker group
+    #############################################
+    - name: Ensure docker group exist 
+      ansible.builtin.group:
+        name: docker
+        state: present
+    - name: Add user to docker group
+      ansible.builtin.user:
+        name: "{{ docker_user[ansible_os_family] }}"
+        groups: docker
+        append: yes
+##########
+#clone the app from version control system
+##########
+    - name: clone the app from github
+      ansible.builtin.git:
+        repo: "{{ github }}"
+        dest: "{{ build_path }}"
+        version: main
+        force: yes
+#####################
+#####build the docker image
+#####################
+    - name: build the docker image
+      community.docker.docker_image_build:
+        name: my-nginx
+        tag: v1
+        path: "{{build_path}}"
+      register: image
+##########################################
+##show images
+##########################################
+    - name: Display docker images
+      ansible.builtin.debug:
+        msg: "Image Name:{{ image }}"
+########################################
+######using the image we are going to run the container
+########################################
+
+    - name: run the docker container 1
+      community.docker.docker_container:
+        name: web1
+        image: my-nginx:v1
+        state: started
+        restart_policy: always
+        ports:
+          - "8081:80"
+    - name: run the docker container 2
+      community.docker.docker_container:
+        name: web2
+        image: my-nginx:v1
+        state: started
+        restart_policy: always
+        ports:
+          - "8082:80"
+#####################################################
+#####gather container information
+#####################################################
+
+    - name: gather container information web1
+      community.docker.docker_container_info:
+        name: web1
+      register: web1 
+    - name: gather container information web2
+      community.docker.docker_container_info:
+        name: web2
+      register: web2
+    - name: Display container information
+      ansible.builtin.debug:
+        msg: 
+          - "Container Info: {{ item.container.Name }}"
+          - "Container Status: {{ item.container.State.Status }}"
+         
+          - "Container Image: {{ item.container.Image }}"
+      loop:
+        - "{{ web1 }}"
+        - "{{ web2 }}"
+#####################################################
+#authenticate to docker hub and push the image to docker hub
+##################################################### 
+  
+    - name: login to docker hub
+      community.docker.docker_login:
+        username: "{{ dockerhub_username }}"
+        password: "{{ docker_hub_password }}"
+    - name: tag the image for docker hub
+      community.docker.docker_image_build:
+        name: "{{ image_name }}"
+        tag: "{{ image_tag }}"
+        path: "{{ build_path }}"
+    - name: tag the image for docker hub
+      community.docker.docker_image:
+        name: "{{ image_name }}:{{ image_tag }}"
+        tag: "{{ image_tag }}"
+        repository: "{{dockerhub_username}}/{{ docker_hub_repository }}"
+        source: local
+    - name: push the image to docker hub
+      community.docker.docker_image:
+        name: "{{dockerhub_username}}/{{ docker_hub_repository }}"
+        tag: "{{ image_tag }}"
+        source: local
+        push: yes
+
+    - name: run web-1 from hub 
+      community.docker.docker_container:
+        name: web1-hub
+        state: started
+        restart_policy: always
+        image: "{{dockerhub_username}}/{{ docker_hub_repository }}:{{ image_tag }}"
+        published_ports:
+          - "8083:80"
+    - name: run web-2 from hub 
+      community.docker.docker_container:
+        name: web2-hub
+        state: started
+        restart_policy: always
+        image: "{{dockerhub_username}}/{{ docker_hub_repository }}:{{ image_tag }}"
+        published_ports:
+          - "8084:80" 
+    
