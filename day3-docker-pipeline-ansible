@@ -1,0 +1,89 @@
+vi docker.yml
+  ##delete everything and add this playbook
+#every ansible playbook start with ---
+---
+- name: install and configure nginx 
+  hosts: web 
+  become: yes #this will run this playbook with root privileges
+  #we can define some varaibles also for your playbook
+  vars:
+    docker_packages:
+      Debian:
+        - docker.io
+        - docker-compose
+      RedHat:
+        - docker
+    docker_user:
+      Debian: ubuntu
+      RedHat: ec2-user
+    github: "https://github.com/gopal1409/eric-ansible-docker-file-august26.git"
+    build_path: "/opt/docker-app"
+       
+  tasks: #all the task need to be define as list of items
+    - name: gather fact about the system
+      ansible.builtin.setup:
+    - name: display the os
+      ansible.builtin.debug: #this debug module is like an echo command in linux
+        msg: "The OS is {{ ansible_os_family }} and the version is {{ ansible_distribution_version }}"
+    - name: Install docker on ubuntu
+      ansible.builtin.apt:
+        name: "{{ docker_packages.Debian }}"
+        state: present #absent, present, latest
+      when: ansible_os_family == "Debian"    
+    - name: Install docker on amazon linux
+      ansible.builtin.yum:
+        name: "{{ docker_packages.RedHat }}"
+        state: present
+      when: ansible_os_family == "RedHat"
+    - name: Enable and start docker service
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: yes
+    - name: check docker service running
+      ansible.builtin.service_facts:
+    - name: Display docker service status
+      ansible.builtin.debug:
+        msg: "Docker service is {{ ansible_facts.services['docker.service'].state }}"
+    - name: verify docker daemon is running
+      ansible.builtin.command: docker info
+      register: docker_info
+      ignore_errors: yes
+    - name: Display docker info
+      ansible.builtin.debug:
+        msg: "{{ docker_info.stdout }}"
+    ############################################
+    #start docker
+    ########################################### 
+    - name: start docker service 
+      ansible.builtin.service:
+        name: docker
+        state: started 
+        enabled: yes
+    ###########################################
+    #add user to docker group
+    #############################################
+    - name: Ensure docker group exist 
+      ansible.builtin.group:
+        name: docker
+        state: present
+    - name: Add user to docker group
+      ansible.builtin.user:
+        name: "{{ docker_user[ansible_os_family] }}"
+        groups: docker
+        append: yes
+##########
+#clone the app from version control system
+##########
+    - name: clone the app from github
+      ansible.builtin.git:
+        repo: "{{ github }}"
+        dest: "{{ build_path }}"
+        version: main
+        force: yes
+
+##run this playbook using ansible-playbook docker.yml
+          ##here you need to resolve an issue in ec2 instance it cannot find git inside this playbook add the task at the top and install git using the task only
+          ##next you need to login to ubuntu ssytem got to cd /opt 
+          do ls
+          ###check that docker file is download or not
