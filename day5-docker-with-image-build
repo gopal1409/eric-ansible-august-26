@@ -136,8 +136,8 @@
         msg: 
           - "Container Info: {{ item.container.Name }}"
           - "Container Status: {{ item.container.State.Status }}"
-          - "Container IP Address: {{ item.container.IPAddress }}"
-          - "Container Ports: {{ item.container.NetworkSettings.Networks.bridge.Ports }}"
+          - "Container IP Address: {{ item.container.NetworkSettings.Networks.bridge.IPAddress }}"
+          - "Container Ports: {{ item.container.NetworkSettings.Ports }}"
           - "Container Image: {{ item.container.Image }}"
       loop:
         - "{{ web1 }}"
