@@ -1,6 +1,7 @@
 vi docker.yml
   ##delete everything and add this playbook
 #every ansible playbook start with ---
+#every ansible playbook start with ---
 ---
 - name: install and configure nginx 
   hosts: web 
@@ -20,6 +21,10 @@ vi docker.yml
     build_path: "/opt/docker-app"
        
   tasks: #all the task need to be define as list of items
+    - name: install git package
+      ansible.builtin.package:
+        name: git
+        state: present
     - name: gather fact about the system
       ansible.builtin.setup:
     - name: display the os
@@ -81,7 +86,6 @@ vi docker.yml
         dest: "{{ build_path }}"
         version: main
         force: yes
-
 ##run this playbook using ansible-playbook docker.yml
           ##here you need to resolve an issue in ec2 instance it cannot find git inside this playbook add the task at the top and install git using the task only
           ##next you need to login to ubuntu ssytem got to cd /opt 
