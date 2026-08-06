@@ -1,0 +1,14 @@
+ssh-keygen -t rsa -f /root/.ssh/aws-devops-key -C "aws-devops-key"
+   Load the Key into ssh-agent
+Start the agent:
+
+eval "$(ssh-agent -s)"
+Add the key:
+
+ssh-add /root/.ssh/aws-devops-key
+Verify:
+
+ssh-add -l
+Now Git uses the loaded key automatically:
+
+git push origin main
