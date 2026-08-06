@@ -29,6 +29,32 @@ web2 ansible_host=172.31.33.196
   544  cat common/defaults/main.yml
   545  cat common/handlers/main.yml
   546  cat common/meta/main.yml
+####inside the common folder in task main.yml file 
+vi common/tasks/main.yml
+##########################################
+---
+# tasks file for common
+- name: install git package
+  ansible.builtin.package:
+     name: git
+     state: present
+- name: gather fact about the system
+  ansible.builtin.setup:
+- name: display the os
+  ansible.builtin.debug: #this debug module is like an echo command in linux
+     msg: "The OS is {{ ansible_os_family }} and the version is {{ ansible_distribution_version }}"
+#####once we add the task on the current or the parent directory we need to add a file which will execute this role
+ vi site.yml
+- name: install and configure nginx
+  hosts: web
+  become: yes #this will run this playbook with root privileges
+  #we can define some varaibles also for your playbook
+  roles:
+    - common
+
+####run it using 
+ansible-playbook site.yml
+
 
 
   
