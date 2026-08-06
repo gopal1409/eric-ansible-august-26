@@ -17,4 +17,42 @@
   output format: json
     region: us-east-1
   550  aws sts get-caller-identity
+
+##lets verify the dynamic inventory
+vi ansible.cfg
+############################
+[inventory]
+enable_plugins = amazon.aws.aws_ec2
+########
+vi aws_ec2.yml
+
+---
+plugin: amazon.aws.aws_ec2
+
+regions:
+  - us-east-1
+
+keyed_groups:
+  - key: tags.Environment
+    prefix: env
+
+  - key: instance_type
+    prefix: type
+
+  - key: placement.region
+    prefix: region
+
+hostnames:
+  - private-ip-address
+  - dns-name
+
+compose:
+  ansible_host: public_ip_address
+
+filters:
+  instance-state-name: running
+##after this we need to check that it is geeting the inventory or not 
+561  ansible-inventory -i aws_ec2.yml --list
+561  ansible-inventory -i aws_ec2.yml --graph
+
   551  aws s3 ls
