@@ -1,0 +1,9 @@
+##in the master node 
+  apt install default-jdk
+  ##once you install jdk 
+  ##go to this website
+  https://www.jenkins.io/doc/book/installing/linux/#debianubuntu
+###whatever content you have in lts release copy the same and paste it
+  systemctl enable jenkins
+  systemctl start jenkins
+  systemctl status jenkins
