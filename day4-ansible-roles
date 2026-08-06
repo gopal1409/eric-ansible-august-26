@@ -56,3 +56,177 @@ docker_test	Run image scanning (for example, Trivy), smoke tests, and container 
 docker_publish	Authenticate to Docker Hub and push images
 docker_deploy	Deploy and verify containers
 cleanup	Remove old images, stopped containers, and unused volumes
+
+Ansible provides several commands to create, inspect, and use roles. Here are the most commonly used ones.
+
+1. Create a New Role
+
+The ansible-galaxy role init command creates the standard role directory structure.
+
+ansible-galaxy role init nginx
+
+Output:
+
+roles/
+└── nginx/
+    ├── defaults/
+    │   └── main.yml
+    ├── files/
+    ├── handlers/
+    │   └── main.yml
+    ├── meta/
+    │   └── main.yml
+    ├── tasks/
+    │   └── main.yml
+    ├── templates/
+    ├── tests/
+    │   ├── inventory
+    │   └── test.yml
+    └── vars/
+        └── main.yml
+2. Create Multiple Roles
+ansible-galaxy role init common
+ansible-galaxy role init docker
+ansible-galaxy role init application
+ansible-galaxy role init dockerhub
+
+Or using a loop:
+
+for role in common docker application dockerhub
+do
+    ansible-galaxy role init roles/$role
+done
+
+Result:
+
+roles/
+├── common/
+├── docker/
+├── application/
+└── dockerhub/
+3. Install a Role from Ansible Galaxy
+ansible-galaxy role install geerlingguy.docker
+
+Install a specific version:
+
+ansible-galaxy role install geerlingguy.docker,7.1.0
+4. Install Roles from a Requirements File
+
+Create requirements.yml:
+
+roles:
+  - name: geerlingguy.docker
+    version: 7.1.0
+
+  - name: geerlingguy.nginx
+
+Install all roles:
+
+ansible-galaxy role install -r requirements.yml
+5. List Installed Roles
+ansible-galaxy role list
+
+Example:
+
+# /home/ubuntu/.ansible/roles
+- geerlingguy.docker, 7.1.0
+- geerlingguy.nginx, 3.2.0
+6. Remove an Installed Role
+ansible-galaxy role remove geerlingguy.docker
+7. Search for Roles on Ansible Galaxy
+ansible-galaxy role search docker
+
+Example:
+
+Found 120 roles matching your search:
+
+geerlingguy.docker
+atosatto.docker
+8. Show Role Information
+ansible-galaxy role info geerlingguy.docker
+
+Displays:
+
+Author
+Version
+Platforms
+Dependencies
+Description
+9. Initialize a Role in a Specific Directory
+ansible-galaxy role init roles/docker
+
+or
+
+ansible-galaxy role init ./roles/docker
+10. Use a Role in a Playbook
+---
+- hosts: web
+  become: yes
+
+  roles:
+    - common
+    - docker
+    - application
+    - dockerhub
+11. Run a Playbook That Uses Roles
+ansible-playbook site.yml
+
+With an inventory:
+
+ansible-playbook -i inventory site.yml
+12. Run Only Tasks with Specific Tags
+
+If your role tasks are tagged:
+
+ansible-playbook site.yml --tags docker
+
+Multiple tags:
+
+ansible-playbook site.yml --tags "docker,application"
+
+Skip tags:
+
+ansible-playbook site.yml --skip-tags dockerhub
+13. Display the Role Directory Tree
+tree roles/
+
+Example:
+
+roles/
+├── common
+├── docker
+├── application
+└── dockerhub
+14. Recommended Enterprise Commands
+# Create project
+mkdir ansible-project
+cd ansible-project
+
+# Create roles directory
+mkdir roles
+
+# Initialize roles
+ansible-galaxy role init roles/common
+ansible-galaxy role init roles/docker
+ansible-galaxy role init roles/application
+ansible-galaxy role init roles/dockerhub
+
+# Verify structure
+tree roles
+
+# Run the playbook
+ansible-playbook -i inventory site.yml
+
+# Run only Docker tasks
+ansible-playbook -i inventory site.yml --tags docker
+
+# Check syntax
+ansible-playbook --syntax-check site.yml
+
+# Dry run
+ansible-playbook -i inventory site.yml --check
+
+# Show planned changes
+ansible-playbook -i inventory site.yml --check --diff
+
+These commands cover the most common lifecycle of working with Ansible roles: creating them, installing reusable roles from Ansible Galaxy, organizing project-specific roles, and executing playbooks that use them.
