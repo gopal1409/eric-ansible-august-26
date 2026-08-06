@@ -1,0 +1,53 @@
+---
+- name: End-to-End Validation
+  hosts: web
+
+  tasks:
+
+    - name: Gather Information
+      community.docker.docker_container_info:
+        name: "{{ item }}"
+      loop:
+        - web1
+        - web2
+        - web1-hub
+        - web2-hub
+      register: containers
+
+    - name: Verify All Containers
+      ansible.builtin.assert:
+        that:
+          - item.container.State.Status == "running"
+        success_msg: "{{ item.container.Name }} is running"
+        fail_msg: "{{ item.container.Name }} is NOT running"
+      loop: "{{ containers.results }}"
+
+    - name: Verify Docker Images
+      community.docker.docker_image_info:
+        name: "{{ image_name }}"
+      register: images
+
+    - name: Assert Image Exists
+      ansible.builtin.assert:
+        that:
+          - images.images | length > 0
+
+    - name: Verify HTTP Endpoint 8081
+      ansible.builtin.uri:
+        url: http://localhost:8081
+        status_code: 200
+
+    - name: Verify HTTP Endpoint 8082
+      ansible.builtin.uri:
+        url: http://localhost:8082
+        status_code: 200
+
+    - name: Verify HTTP Endpoint 8083
+      ansible.builtin.uri:
+        url: http://localhost:8083
+        status_code: 200
+
+    - name: Verify HTTP Endpoint 8084
+      ansible.builtin.uri:
+        url: http://localhost:8084
+        status_code: 200
