@@ -54,7 +54,59 @@ vi common/tasks/main.yml
 
 ####run it using 
 ansible-playbook site.yml
+###lets add another role docker
+537  ansible-galaxy role init docker
+  538  ls
+  539  tree
+  540  tree docker/
+##inside the role we will add the task
+vi docker/tasks/main.yml
+---
+# tasks file for docker
+- name: Install docker on ubuntu
+  ansible.builtin.apt:
+    name: "{{ docker_packages.Debian }}"
+    state: present #absent, present, latest
+  when: ansible_os_family == "Debian"
+- name: Install docker on amazon linux
+  ansible.builtin.yum:
+    name: "{{ docker_packages.RedHat }}"
+    state: present
+  when: ansible_os_family == "RedHat"
+
+  #we will arrange all the inventory varaibles inside a single file
+  542  mkdir group_vars
+  543  vi group_vars/all.yml
+dockerhub_username: "gopal1409" #change it to your dockerhub login id
+docker_hub_password: "{{vault_docker_hub_password}}" #this is a variable from vault.yml file
+docker_hub_repository: "gopal1409" #change it to  your dockerhub login id
+image_name: my-nginx
+image_tag: "v1"
+docker_packages:
+  Debian:
+    - docker.io
+    - docker-compose
+
+  RedHat:
+     - docker
+docker_user:
+  Debian: ubuntu
+  RedHat: ec2-user
+github: "https://github.com/gopal1409/eric-ansible-docker-file-august26.git"
+build_path: "/opt/docker-app"
 
 
-
+  545  vi site.yml
+##inside site.yml we will define docker roles
+---
+- name: install and configure nginx
+  hosts: web
+  become: yes #this will run this playbook with root privileges
+  #we can define some varaibles also for your playbook
+  roles:
+    - common
+    - docker
+##finally run the playbook
+  546  ansible-playbook site.yml
+  
   
