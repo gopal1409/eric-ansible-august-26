@@ -1,0 +1,23 @@
+##lets create a directory and go inside the directory
+  mkdir ansible-docker-project
+  cd ansible-docker-project
+  #####inside the directory we will create some file 
+  ##from the project folder copy the content of the file to this file
+  533  vi ansible.cfg
+[defaults]
+inventory =  host.ini
+host_key_checking=false
+remote_user=root
+log_path = ./log/ansible.log
+forks = 5
+
+  534  vi host.ini (change the ip address to your worker node
+[ansible]
+ansible-master ansible_connection=local
+[web]
+web1 ansible_host=172.31.82.114
+web2 ansible_host=172.31.33.196
+
+  ###lets create our first role and see the directory structure
+
+  
