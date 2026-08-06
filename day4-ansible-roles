@@ -44,3 +44,15 @@ ansible-docker-project/
         │   └── main.yml
         └── defaults/
             └── main.yml
+Recommended Enterprise Role Design
+
+For production-grade projects, I recommend organizing the automation into the following reusable roles:
+
+Role	Responsibility
+common	Install Git, gather facts, validate prerequisites
+docker	Install and configure Docker Engine
+docker_build	Clone source code and build container images
+docker_test	Run image scanning (for example, Trivy), smoke tests, and container validation
+docker_publish	Authenticate to Docker Hub and push images
+docker_deploy	Deploy and verify containers
+cleanup	Remove old images, stopped containers, and unused volumes
