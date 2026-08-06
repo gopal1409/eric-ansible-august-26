@@ -1,0 +1,20 @@
+###install the required collection
+  cd /root
+   535  mkdir ec2
+  536  cd ec2
+  537  ansible-galaxy collection install amazon.aws
+  538  ansible-galaxy collection list | grep  amazon.aws
+##############lets install aws cli to ubuntu
+  540  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+  541  unzip awscliv2.zip
+  545  sudo ./aws/install
+  546  aws help
+  547  aws --version
+###we need to configure it to communciate this master node with aws
+  549  aws configure
+  accesskey: AKIAVFRJ3GX76EI4UKPI
+   (the last mp you need to change it to VP) then paste it 
+  output format: json
+    region: us-east-1
+  550  aws sts get-caller-identity
+  551  aws s3 ls
