@@ -19,5 +19,16 @@ web1 ansible_host=172.31.82.114
 web2 ansible_host=172.31.33.196
 
   ###lets create our first role and see the directory structure
+  536  apt install tree
+  537  ansible-galaxy role init common
+  538  ls
+  539  tree common
+#####if i do tree common 
+ 541  tree common
+  542  cat common/README.md
+  544  cat common/defaults/main.yml
+  545  cat common/handlers/main.yml
+  546  cat common/meta/main.yml
+
 
   
