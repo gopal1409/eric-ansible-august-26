@@ -12,3 +12,8 @@
   643  history
   644  git status
   645  git log
+##lets get the public key 
+ 636  cat  /root/.ssh/id_rsa.pub
+####once you get the public key 
+####go to github setting extreme right top button click on it you will see settings
+##in access you will find ssh and gpg new key give a name copy the key from the terminal and paste it
