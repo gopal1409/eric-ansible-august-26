@@ -1,0 +1,46 @@
+ansible-docker-project/
+│
+├── inventory
+├── site.yml
+├── vault.yml
+├── ansible.cfg
+│
+├── group_vars/
+│   └── all.yml
+│
+└── roles/
+    ├── common/
+    │   ├── tasks/
+    │   │   └── main.yml
+    │   └── defaults/
+    │       └── main.yml
+    │
+    ├── docker/
+    │   ├── tasks/
+    │   │   ├── install.yml
+    │   │   ├── configure.yml
+    │   │   ├── verify.yml
+    │   │   └── main.yml
+    │   ├── defaults/
+    │   │   └── main.yml
+    │   └── handlers/
+    │       └── main.yml
+    │
+    ├── application/
+    │   ├── tasks/
+    │   │   ├── clone.yml
+    │   │   ├── build.yml
+    │   │   ├── run.yml
+    │   │   ├── verify.yml
+    │   │   └── main.yml
+    │   └── defaults/
+    │       └── main.yml
+    │
+    └── dockerhub/
+        ├── tasks/
+        │   ├── login.yml
+        │   ├── push.yml
+        │   ├── deploy.yml
+        │   └── main.yml
+        └── defaults/
+            └── main.yml
