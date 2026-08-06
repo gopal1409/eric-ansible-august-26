@@ -1,0 +1,14 @@
+##we will go inside the root directory
+  cd /root
+634  cd ansible-docker-project/
+  635  ls
+#we will configure some global variables to change my name to your name
+  638  git config --global user.name "gopal"
+  639  git config --global user.email "gopal1409@gmail.com"
+  #you want to manage 
+  640  git init
+  641  git add .
+  642  git commit -m "ansible playbook"
+  643  history
+  644  git status
+  645  git log
