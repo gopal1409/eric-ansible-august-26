@@ -56,3 +56,38 @@ cat /root/.ssh/id_rsa
 #####generate code
 ##copy that line and paste it inside steps block
 ##then re build it you will see your first stage passed and it show in green
+#lets build it do the unit test and check the code coverage
+##it will fail in code coverage
+pipeline {
+    agent any
+    stages {
+        stage('code from SCM') {
+            steps {
+                git branch: 'main', credentialsId: 'git-key', url: 'git@github.com:gopal1409/eric-spring-boot-prj-august26.git'
+            }
+        }
+        stage('mvn build') {
+            steps {
+                sh 'mvn -B -DskipTests clean package'
+            }
+        }
+        stage('achive artifact') {
+            steps {
+                archiveArtifacts artifacts: 'target/*.jar',
+                   fingerprint: true,
+                   onlyIfSuccessful: true
+            }
+        }
+        stage('unit test') {
+            steps {
+                sh 'mvn test'
+                junit 'target/surefire-reports/*.xml'
+            }
+        }
+        stage ('code coverage') {
+            steps {
+                jacoco()
+            }
+        }
+    }
+}
