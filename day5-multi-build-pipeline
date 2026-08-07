@@ -1,0 +1,26 @@
+774  cd /root
+  775  mkdir multi
+  776  cd multi/
+  777  git init
+  #inside the Jenkinsfile add the ci pipeline script you can get it from ci project
+  778  vi Jenkinsfile
+  779  git add .
+  780  git commit -m "ci pipeline"
+  781  git branch -M main
+  ##create a new repo in github and upload the same
+  782  git remote add origin git@github.com:gopal1409/eric-multi-branch-pipeline-aug-26.git
+  783  git push -u origin main
+  ##create a new branch docker
+  784  git branch docker
+  785  git checkout docker
+  #delete everything from jenkins file and copy the pipeline script from docker pipeline and paste it 
+  786  vi Jenkinsfile 
+  787  git add .
+  788  git commit -m "docker pipeline"
+  789  git push origin docker
+
+  #####go to jenkins new iten create a new job called as multi build pipeline
+  in place of pipeline we need to select multi-branch-pipeline
+  add source select git
+  #give you github url 
+  select your authentication
