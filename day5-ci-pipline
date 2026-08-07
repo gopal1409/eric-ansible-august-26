@@ -91,3 +91,11 @@ pipeline {
         }
     }
 }
+
+#lets install some of the plugin
+JaCoCo
+Warnings
+SonarQube Scanner
+docker
+HTML Publisher
+
