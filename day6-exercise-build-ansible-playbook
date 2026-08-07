@@ -78,6 +78,9 @@ forks = 5
           - "Server: {{ website_result.Server | default('Unknown') }}"
           - "Response Length: {{ website_result.content | length }} bytes"
   #####once done with the playbook
-            #create a new pipeline using 
-  
+#git init
+git add .
+git commit -m "ansible play"
+###add the remote repo
+git push origin main
   
