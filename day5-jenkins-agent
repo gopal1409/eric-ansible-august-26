@@ -14,7 +14,7 @@ Jenkins Architecture
  +----------------+  +----------------+  +----------------+
 Step 1: Install Java on the Agent
 
-On Ubuntu:
+On Ubuntu node
 
 sudo apt update
 sudo apt install default-jdk
