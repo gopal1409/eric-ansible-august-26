@@ -102,3 +102,46 @@ HTML Publisher
 http://23.22.41.214:9000/
 admin
 Admin@12345678
+#sonar pipeline
+pipeline {
+    agent any
+    stages {
+        stage('code from SCM') {
+            steps {
+                git branch: 'main', credentialsId: 'git-key', url: 'git@github.com:gopal1409/eric-spring-boot-prj-august26.git'
+            }
+        }
+        stage('mvn build') {
+            steps {
+                sh 'mvn -B -DskipTests clean package'
+            }
+        }
+        stage('achive artifact') {
+            steps {
+                archiveArtifacts artifacts: 'target/*.jar',
+                   fingerprint: true,
+                   onlyIfSuccessful: true
+            }
+        }
+        stage('unit test') {
+            steps {
+                sh 'mvn test'
+                junit 'target/surefire-reports/*.xml'
+            }
+        }
+        stage ('code coverage') {
+            steps {
+                jacoco()
+            }
+        }
+        stage('sonar') {
+            steps {
+                sh '''mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+                    -Dsonar.projectKey=gopal-sonar \
+                    -Dsonar.projectName='gopal-sonar' \
+                    -Dsonar.host.url=http://23.22.41.214:9000 \
+                    -Dsonar.token=sqp_0d273bd70587abe75b1279b5348c6267ee33e5c0'''
+            }
+        }
+    }
+}
