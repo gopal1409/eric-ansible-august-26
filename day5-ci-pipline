@@ -22,3 +22,37 @@
 http://23.22.41.214:9000/
 username: admin
 pass: Admin@12345678
+##in jenkins setting we need to disable go to security extreme below you will find 
+Git Host Key Verification Configuration
+##3make it none
+#lets creat a new pipeline in jenkins give a name ci-pipeline
+#select the job type as pipeline
+##then go extreme below you will find pipeline script
+pipeline {
+    agent any
+    stages {
+        stage('code from SCM') {
+            steps {
+                
+            }
+        }
+    }
+}
+###once you put the code inside step block i need to do the integration with github we have pipeline syntax generator click on it 
+##from there select git
+#in repo url put ur ssh url where you uploaded the spring boot application
+##branch type main
+#####in credential click on add 
+#select ssh username with private key 
+id: gitkey
+description: git key
+username: root
+privatekey: click on enter directly
+##lets get the private key
+cat /root/.ssh/id_rsa
+##paste the key 
+###once done save it 
+##in credential select the key
+#####generate code
+##copy that line and paste it inside steps block
+##then re build it you will see your first stage passed and it show in green
