@@ -18,3 +18,7 @@
     #once pushed you will see the code in github
   748  git push -u origin main
   749  systemctl restart jenkins
+##lets access the sonar
+http://23.22.41.214:9000/
+username: admin
+pass: Admin@12345678
