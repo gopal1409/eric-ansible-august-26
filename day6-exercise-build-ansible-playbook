@@ -1,0 +1,83 @@
+##install ansible plugin in jenkins
+  #cd /root
+  mkdir ansible-job
+  cd ansible-job
+  ###inside this directory create file ansible.cfg
+[defaults]
+inventory =  host.ini
+host_key_checking=false
+remote_user=root
+forks = 5
+#create the inventory file host.ini
+[defaults]
+inventory =  host.ini
+host_key_checking=false
+remote_user=root
+log_path = ./log/ansible.log
+forks = 5
+#create a playbook nginx.yml
+#every ansible playbook start with ---
+---
+- name: install and configure nginx 
+  hosts: web 
+  become: yes #this will run this playbook with root privileges
+  #we can define some varaibles also for your playbook
+  vars:
+    ubuntu_packages:
+      - nginx
+      - ufw
+    amazon_packages:
+      - nginx
+      - firewalld
+    website_title: "welcome to Devops"
+    company: "acme technology"
+#where is the diction and where the list of items
+  tasks: #all the task need to be define as list of items
+    - name: gather fact about the system
+      ansible.builtin.setup:
+    - name: display the os
+      ansible.builtin.debug: #this debug module is like an echo command in linux
+        msg: "The OS is {{ ansible_os_family }} and the version is {{ ansible_distribution_version }}"
+    - name: Install nginx on ubuntu
+      ansible.builtin.apt:
+        name: "{{ ubuntu_packages }}"
+        state: present #absent, present, latest
+      when: ansible_os_family == "Debian"    
+    - name: Install nginx on amazon linux
+      ansible.builtin.yum:
+        name: "{{ amazon_packages }}"
+        state: present
+      when: ansible_os_family == "RedHat"
+    - name: copy configuration file to nginx
+      ansible.builtin.copy:
+        src: templates/nginx.conf.j2
+        dest: /usr/share/nginx/html/index.html
+      notify: restart_nginx
+  handlers:
+    - name: restart_nginx
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
+        enabled: yes 
+      notify: 
+        - skyforce   
+        - Display Website Result
+          
+    - name: skyforce
+      ansible.builtin.uri:
+        url: http://localhost
+        method: GET
+        return_content: yes
+        status_code: 200
+      #if we want to store the output of this task we can use register keyword
+      register: website_result
+    - name: Display Website Result
+      ansible.builtin.debug:
+        msg:
+          - "HTTP_Status: {{ website_result.status }}"
+          - "Server: {{ website_result.Server | default('Unknown') }}"
+          - "Response Length: {{ website_result.content | length }} bytes"
+  #####once done with the playbook
+            #create a new pipeline using 
+  
+  
