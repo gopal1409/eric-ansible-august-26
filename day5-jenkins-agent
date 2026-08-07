@@ -1,0 +1,139 @@
+In modern Jenkins terminology, a "slave" is called an Agent (the functionality is the same). An agent is a machine where Jenkins executes build jobs, while the Controller manages scheduling and orchestration.
+
+Jenkins Architecture
+                +----------------------+
+                |   Jenkins Controller |
+                +----------+-----------+
+                           |
+          -----------------------------------------
+          |                  |                    |
+          ▼                  ▼                    ▼
+ +----------------+  +----------------+  +----------------+
+ | Linux Agent    |  | Windows Agent  |  | Docker Agent   |
+ | Ubuntu 24.04   |  | Windows Server |  | Ephemeral       |
+ +----------------+  +----------------+  +----------------+
+Step 1: Install Java on the Agent
+
+On Ubuntu:
+
+sudo apt update
+sudo apt install openjdk-21-jdk -y
+
+Verify:
+
+java -version
+Step 2: Create an Agent in Jenkins
+
+Go to:
+
+Manage Jenkins
+    ↓
+Nodes
+    ↓
+New Node
+
+Enter:
+
+Name : ubuntu-agent
+
+Select:
+
+Permanent Agent
+
+Click Create.
+
+Step 3: Configure the Agent
+
+Example configuration:
+
+Setting	Value
+Number of Executors	2
+Remote Root Directory	/home/jenkins
+Labels	linux docker
+Usage	Use this node as much as possible
+
+Launch method:
+
+Launch agents via SSH
+Step 4: Configure SSH
+
+Example:
+
+Field	Value
+Host	192.168.1.100
+Credentials	SSH Username with Private Key
+Port	22
+Step 5: Create SSH Credentials
+
+Go to:
+
+Manage Jenkins
+      ↓
+Credentials
+      ↓
+System
+      ↓
+Global Credentials
+
+Create:
+
+Kind: SSH Username with private key
+Username:
+ubuntu
+Private Key:
+~/.ssh/id_rsa
+
+or paste the private key directly.
+
+Step 6: Start the Agent
+
+Click:
+
+Nodes
+     ↓
+ubuntu-agent
+     ↓
+Launch Agent
+
+Expected log:
+
+SSH Launcher: Connecting
+
+Java version detected
+
+Copying remoting.jar
+
+Starting Agent
+
+Agent successfully connected
+
+Status:
+
+Online
+Step 7: Run Jobs on the Agent
+Declarative Pipeline
+pipeline {
+
+    agent {
+        label 'linux'
+    }
+
+    stages {
+
+        stage('Build') {
+
+            steps {
+
+                sh 'hostname'
+
+                sh 'java -version'
+
+                sh 'mvn clean package'
+
+            }
+
+        }
+
+    }
+
+}
