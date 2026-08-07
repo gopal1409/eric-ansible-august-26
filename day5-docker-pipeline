@@ -1,0 +1,20 @@
+#you need to be inside the eric folder
+756  cd eric-spring-boot-prj-august26/
+  ##inside docker file provide this instruction
+  758  vi dockerfile
+
+FROM eclipse-temurin:21-jre
+
+WORKDIR /app
+
+COPY target/*.jar app.jar
+
+EXPOSE 8080
+
+ENTRYPOINT ["java","-jar","app.jar"]
+#then add it commit it and push 
+  761  git add .
+  762  git commit -m "added docker file"
+  763  git push origin main
+  #create a new pipeline job in jenkins
+  
