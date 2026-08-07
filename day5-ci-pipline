@@ -12,7 +12,7 @@
   741  git commit -m "spring boot application"
   742  git log
   743  git branch -M main
-    ##create a new repo in github once you create the new repo 
+    ##create a new repo in github once you create the new repo while creating the new repo you need to select the same as private
 #below mentione repo need to be change with your own repo select ssh 
   747  git remote add origin git@github.com:gopal1409/eric-springapp.git
     #once pushed you will see the code in github
