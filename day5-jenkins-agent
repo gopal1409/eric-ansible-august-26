@@ -18,6 +18,7 @@ On Ubuntu:
 
 sudo apt update
 sudo apt install default-jdk
+sudo apt install maven
 Verify:
 
 java -version
